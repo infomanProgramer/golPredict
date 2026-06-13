@@ -1,6 +1,8 @@
 from usuarios import Usuario
+from utils import generate_edit_menu
 
-def showMainMenu():
+
+def show_main_menu():
     print("******* MENU PRINCIPAL *********")
     print("")
     print("     1. Usuarios")
@@ -42,17 +44,34 @@ def showOperationsUsers():
             usuario.save()
         if opcion == eliminar_usuario:
             usuario.get_all()
-            nombre = input("Ingrese el nombre del usuario a eliminar: ")
-            usuario.delete(nombre)
+            _id = int(input("Ingrese el ID del usuario a eliminar: "))
+            usuario.delete_by_id(_id)
         if opcion == editar_usuario:
+            usuario.get_all()
+            _id = int(input("Ingrese el ID del usuario a editar: "))
+            usuario.get_by_id(_id)
+            print("Seleccione el número del campo a editar:")
+            seleccion = generate_edit_menu("USUARIO", usuario.get_campos())
             #usuario.update()
-            pass
         if opcion == volver:
             break
-    
+
+def showOperationsPronosticos():
+    print("********* PRONOSTICOS *************")
+    print("")
+    print("     1. Listar pronosticos")
+    print("     2. Agregar pronostico")
+    print("     3. Eliminar pronostico")
+    print("     4. Editar pronostico")
+    print("     5. Volver")
+    print("")
+    print("********************************")
+    opcion = input("Seleccione una opcion: ")
+    return opcion
+
 def main():
     while True:
-        opcion = showMainMenu()  
+        opcion = show_main_menu()  
         if opcion == "1":
             showOperationsUsers()
         elif opcion == "2":
