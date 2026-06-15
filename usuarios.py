@@ -2,7 +2,7 @@ from conexionBd import ConexionBd
 
 class Usuario:
 
-    campos = [
+    fields = [
         {"name": "nombre", "type": "text"},
         {"name": "password", "type": "text"}
     ]
@@ -10,15 +10,15 @@ class Usuario:
     def __init__(self):
         self.nombre = None
         self.password = None
-
-    def get_campos(self):
-        return self.campos
     
     def create(self, nombre, password):
         self.nombre = nombre
         self.password = password
 
-    def get_all(self):
+    def get_fields(self):
+        return self.fields
+
+    def show_all(self):
         try:
             conn = ConexionBd()
             resultado = conn.ejecutar("SELECT * FROM usuarios")
@@ -28,7 +28,7 @@ class Usuario:
         except Exception as e:
             print(f"Error al listar usuarios: {e}")
     
-    def get_by_id(self, id):
+    def show_by_id(self, id):
         try:
             conn = ConexionBd()
             resultado = conn.ejecutar("SELECT * FROM usuarios WHERE id = "+str(id))
@@ -38,10 +38,31 @@ class Usuario:
         except Exception as e:
             print(f"Error al listar usuarios: {e}")
     
-    def edit_by_id(self, id):
+    def get_properties_of_field_by_id_selected(self, id, number_of_field):
+        number_of_field = int(number_of_field)
         try:
             conn = ConexionBd()
-            conn.ejecutar("UPDATE usuarios SET nombre = '"+str(self.nombre)+"', password = '"+str(self.password)+"' WHERE id = "+str(id))
+            resultado = conn.ejecutar("SELECT "+self.fields[number_of_field - 1]["name"]+" FROM usuarios WHERE id = "+str(id))
+            conn.close()
+            return {
+                "name_of_field": self.fields[number_of_field - 1]["name"],
+                "type_of_field": self.fields[number_of_field - 1]["type"],
+                "value_of_field": str(resultado[0][0])
+            }
+        except Exception as e:
+            print(f"Error al listar usuarios: {e}")
+    
+    
+    def edit_by_id(self, id_user, value_and_type_of_value, new_value_of_field):
+        query = ""
+        if value_and_type_of_value["type_of_field"] == 'text':
+            query = "UPDATE usuarios SET "+value_and_type_of_value["name_of_field"]+" = '"+str(new_value_of_field)+"' WHERE id = "+str(id_user)
+        else:
+            query = "UPDATE usuarios SET "+value_and_type_of_value["name_of_field"]+" = "+str(new_value_of_field)+" WHERE id = "+str(id_user)
+
+        try:
+            conn = ConexionBd()
+            conn.ejecutar(query)
             conn.close()
             print("Usuario editado correctamente")
         except Exception as e:
